@@ -1,0 +1,44 @@
+{
+  "name": "zora-ai-agent",
+  "version": "1.0.0",
+  "description": "AI Agent for NFT Analytics on Zora platform",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc --build",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean && npm run typecheck",
+    "postinstall": "echo '📦 Dependencies installed successfully'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.1.5",
+    "express-session": "^1.17.3",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.7.0",
+    "passport-twitter": "^1.0.4",
+    "stripe": "^14.21.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.3",
+    "@types/express-session": "^1.17.10",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^24.2.1",
+    "@types/passport": "^1.0.16",
+    "@types/passport-twitter": "^1.0.39",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

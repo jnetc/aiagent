@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/static/css/global.css">
+  <link rel="stylesheet" href="/static/css/auth.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <i class="fas fa-robot"></i>
+        Zora AI Agent
+      </a>
+
+      <div class="nav-menu">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/login" class="btn btn-primary">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <i class="fas fa-robot"></i>
+          <h2>Welcome to Zora AI Agent</h2>
+          <p>Login to access AI-powered NFT analytics</p>
+        </div>
+
+        <div class="auth-content">
+          <a href="/auth/twitter" class="btn btn-twitter btn-large">
+            <i class="fab fa-twitter"></i>
+            Continue with Twitter
+          </a>
+
+          <div class="auth-divider">
+            <span>or</span>
+          </div>
+
+          <div class="coming-soon">
+            <p><i class="fas fa-wallet"></i> Web3 wallet login coming soon</p>
+          </div>
+        </div>
+
+        <div class="auth-footer">
+          <p>New to NFTs? <a href="https://zora.co" target="_blank">Learn about Zora →</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p>&copy; 2024 Zora AI Agent. Powered by AI for NFT Analytics.</p>
+      <div class="footer-links">
+        <a href="/pricing">Pricing</a>
+        <a href="https://twitter.com/zoraaiagent" target="_blank">Twitter</a>
+        <a href="https://discord.gg/zoraai" target="_blank">Discord</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+
+</html>

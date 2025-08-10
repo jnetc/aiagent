@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/static/css/global.css">
+  <link rel="stylesheet" href="/static/css/pricing.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <i class="fas fa-robot"></i>
+        Zora AI Agent
+      </a>
+
+      <div class="nav-menu">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/analytics" class="nav-link">Analytics</a>
+        <div class="nav-user">
+          <img src="<%= user.profileImage || 'https://via.placeholder.com/32' %>" alt="Profile" class="nav-avatar">
+          <span>
+            <%= user.displayName %>
+          </span>
+          <% if (!isPro) { %>
+            <a href="/pricing" class="btn btn-primary btn-small">Upgrade to Pro</a>
+            <% } %>
+              <form action="/auth/logout" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-outline btn-small">Logout</button>
+              </form>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="analytics-header">
+      <div class="container">
+        <div class="header-content">
+          <h1>NFT Analytics Dashboard</h1>
+          <div class="header-stats">
+            <div class="stat-item">
+              <span class="stat-number">
+                <%= stats.totalProjects.toLocaleString() %>
+              </span>
+              <span class="stat-label">Projects Tracked</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">
+                <%= stats.trendingToday %>
+              </span>
+              <span class="stat-label">Trending Today</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">$<%= (stats.totalVolume24h / 1000000).toFixed(1) %>M</span>
+              <span class="stat-label">Volume 24h</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number stat-positive">
+                <%= stats.topGainer %>
+              </span>
+              <span class="stat-label">Top Gainer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-filters">
+      <div class="container">
+        <div class="filters-row">
+          <div class="filter-group">
+            <select class="filter-select" data-filter="platform">
+              <option value="all">All Platforms</option>
+              <option value="zora">Zora</option>
+              <option value="foundation">Foundation</option>
+              <option value="superrare">SuperRare</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <select class="filter-select" data-filter="risk">
+              <option value="all">All Risk Levels</option>
+              <option value="low">Low Risk</option>
+              <option value="medium">Medium Risk</option>
+              <option value="high">High Risk</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <select class="filter-select" data-filter="sort">
+              <option value="trending">Trending</option>
+              <option value="volume">Volume</option>
+              <option value="followers">Follower Growth</option>
+              <option value="marketcap">Market Cap</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <div class="toggle-group">
+              <input type="checkbox" id="trending-only" class="toggle-input">
+              <label for="trending-only" class="toggle-label">Trending Only</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-content">
+      <div class="container">
+        <% if (showUpgradePrompt) { %>
+          <div class="upgrade-banner">
+            <div class="upgrade-content">
+              <i class="fas fa-lock"></i>
+              <div>
+                <h3>Unlock Full Analytics</h3>
+                <p>You're viewing limited data. Upgrade to Pro for complete insights, AI recommendations, and real-time
+                  tracking.</p>
+              </div>
+              <a href="/pricing" class="btn btn-primary">Upgrade Now</a>
+            </div>
+          </div>
+          <% } %>
+
+            <div class="analytics-grid" id="analytics-grid">
+              <% cards.forEach(card=> { %>
+                <div class="analytics-card" data-platform="<%= card.collection.platform %>"
+                  data-risk="<%= card.riskLevel %>" data-trending="<%= card.trending %>">
+                  <div class="card-header">
+                    <div class="artist-info">
+                      <img src="https://via.placeholder.com/48?text=<%= card.artist.displayName.charAt(0) %>"
+                        alt="<%= card.artist.displayName %>" class="artist-avatar">
+                      <div class="artist-details">
+                        <h4>
+                          <%= card.artist.displayName %>
+                        </h4>
+                        <p>@<%= card.artist.username %>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="card-badges">
+                      <span class="platform-badge platform-<%= card.collection.platform %>">
+                        <i class="fas fa-cube"></i>
+                        <%= card.collection.platform %>
+                      </span>
+                      <% if (card.trending) { %>
+                        <span class="trending-badge">
+                          <i class="fas fa-fire"></i> Trending
+                        </span>
+                        <% } %>
+                    </div>
+                  </div>
+
+                  <div class="card-content">
+                    <h3 class="collection-name">
+                      <%= card.collection.name %>
+                    </h3>
+
+                    <div class="metrics-grid">
+                      <div class="metric">
+                        <span class="metric-label">
+                          <i class="fas fa-chart-line"></i> Market Cap
+                        </span>
+                        <span class="metric-value">
+                          <% if (isPro && card.metrics.marketCap> 0) { %>
+                            $<%= card.metrics.marketCap.toLocaleString() %>
+                              <small
+                                class="change <%= card.metrics.marketCapChange24h >= 0 ? 'positive' : 'negative' %>">
+                                <%= card.metrics.marketCapChange24h>= 0 ? '+' : '' %><%=
+                                    card.metrics.marketCapChange24h.toFixed(1) %>%
+                              </small>
+                              <% } else { %>
+                                <span class="pro-feature">🔒 Pro</span>
+                                <% } %>
+                        </span>
+                      </div>
+
+                      <div class="metric">
+                        <span class="metric-label">
+                          <i class="fas fa-exchange-alt"></i> Volume 24h
+                        </span>
+                        <span class="metric-value">
+                          <% if (isPro && card.metrics.volume24h> 0) { %>
+                            $<%= card.metrics.volume24h.toLocaleString() %>
+                              <% } else { %>
+                                <span class="pro-feature">🔒 Pro</span>
+                                <% } %>
+                        </span>
+                      </div>
+
+                      <div class="metric">
+                        <span class="metric-label">
+                          <i class="fas fa-users"></i> Followers
+                        </span>
+                        <span class="metric-value">
+                          <%= card.metrics.followers.toLocaleString() %>
+                            <small class="change <%= card.metrics.followersChange24h >= 0 ? 'positive' : 'negative' %>">
+                              <%= card.metrics.followersChange24h>= 0 ? '+' : '' %><%= card.metrics.followersChange24h
+                                  %>
+                            </small>
+                        </span>
+                      </div>
+
+                      <div class="metric">
+                        <span class="metric-label">
+                          <i class="fas fa-star"></i> Smart Followers
+                        </span>
+                        <span class="metric-value">
+                          <% if (isPro && card.metrics.smartFollowers> 0) { %>
+                            <%= card.metrics.smartFollowers %>
+                              <% } else { %>
+                                <span class="pro-feature">🔒 Pro</span>
+                                <% } %>
+                        </span>
+                      </div>
+
+                      <% if (card.metrics.twitterFollowers) { %>
+                        <div class="metric">
+                          <span class="metric-label">
+                            <i class="fab fa-twitter"></i> Twitter
+                          </span>
+                          <span class="metric-value">
+                            <%= card.metrics.twitterFollowers.toLocaleString() %>
+                              <% if (card.metrics.twitterFollowersChange24h) { %>
+                                <small
+                                  class="change <%= card.metrics.twitterFollowersChange24h >= 0 ? 'positive' : 'negative' %>">
+                                  <%= card.metrics.twitterFollowersChange24h>= 0 ? '+' : '' %><%=
+                                      card.metrics.twitterFollowersChange24h %>
+                                </small>
+                                <% } %>
+                          </span>
+                        </div>
+                        <% } %>
+                    </div>
+
+                    <div class="ai-recommendation">
+                      <div class="ai-header">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Recommendation</span>
+                        <span class="risk-badge risk-<%= card.riskLevel %>">
+                          <%= card.riskLevel.toUpperCase() %> RISK
+                        </span>
+                      </div>
+                      <p>
+                        <%= card.aiRecommendation %>
+                      </p>
+                    </div>
+
+                    <div class="card-tags">
+                      <% card.tags.forEach(tag=> { %>
+                        <span class="tag tag-<%= tag.replace(/[^a-z0-9]/gi, '') %>">
+                          <%= tag %>
+                        </span>
+                        <% }); %>
+                    </div>
+
+                    <div class="card-actions">
+                      <a href="<%= card.artist.profileUrl %>" target="_blank" class="btn btn-outline btn-small">
+                        <i class="fas fa-external-link-alt"></i> View on Zora
+                      </a>
+                      <% if (card.artist.twitterUrl) { %>
+                        <a href="<%= card.artist.twitterUrl %>" target="_blank" class="btn btn-outline btn-small">
+                          <i class="fab fa-twitter"></i> Twitter
+                        </a>
+                        <% } %>
+                          <button class="btn btn-outline btn-small" onclick="shareCard('<%= card.id %>')">
+                            <i class="fas fa-share"></i> Share
+                          </button>
+                    </div>
+                  </div>
+
+                  <div class="card-footer">
+                    <span class="timestamp">
+                      <i class="fas fa-clock"></i>
+                      Updated <%= new Date(card.updatedAt).toLocaleString() %>
+                    </span>
+                  </div>
+                </div>
+                <% }); %>
+            </div>
+
+            <% if (cards.length===0) { %>
+              <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <h3>No analytics cards found</h3>
+                <p>Try adjusting your filters or check back later for new data.</p>
+              </div>
+              <% } %>
+      </div>
+    </div>
+
+    <% if (locals.upgrade==='success' ) { %>
+      <div class="notification success">
+        <p>🎉 Welcome to Pro! You now have access to full analytics and AI insights.</p>
+      </div>
+      <% } %>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p>&copy; 2024 Zora AI Agent. Powered by AI for NFT Analytics.</p>
+      <div class="footer-links">
+        <a href="/pricing">Pricing</a>
+        <a href="https://twitter.com/zoraaiagent" target="_blank">Twitter</a>
+        <a href="https://discord.gg/zoraai" target="_blank">Discord</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+  <script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function () {
+      const filterSelects = document.querySelectorAll('.filter-select');
+      const trendingToggle = document.getElementById('trending-only');
+      const cards = document.querySelectorAll('.analytics-card');
+
+      function applyFilters() {
+        const filters = {
+          platform: document.querySelector('[data-filter="platform"]').value,
+          risk: document.querySelector('[data-filter="risk"]').value,
+          trendingOnly: trendingToggle.checked
+        };
+
+        cards.forEach(card => {
+          let show = true;
+
+          if (filters.platform !== 'all' && card.dataset.platform !== filters.platform) {
+            show = false;
+          }
+
+          if (filters.risk !== 'all' && card.dataset.risk !== filters.risk) {
+            show = false;
+          }
+
+          if (filters.trendingOnly && card.dataset.trending !== 'true') {
+            show = false;
+          }
+
+          card.style.display = show ? 'block' : 'none';
+        });
+      }
+
+      filterSelects.forEach(select => {
+        select.addEventListener('change', applyFilters);
+      });
+
+      trendingToggle.addEventListener('change', applyFilters);
+    });
+
+    function shareCard(cardId) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'NFT Analytics',
+          text: 'Check out this trending NFT project',
+          url: window.location.href + '?card=' + cardId
+        });
+      } else {
+        // Fallback: copy link to clipboard
+        navigator.clipboard.writeText(window.location.href + '?card=' + cardId);
+        alert('Link copied to clipboard!');
+      }
+    }
+  </script>
+</body>
+
+</html>
