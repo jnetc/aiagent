@@ -1,38 +1,34 @@
 import { Router, type IRouter } from 'express';
 import { analyticsController } from '../controllers/analyticsController.js';
-import { authGuard } from '../middlewares/authGuard.js';
+import { authGuard, requirePro, optionalAuth } from '../middlewares/authGuard.js';
 import { rateLimiter } from '../middlewares/rateLimiter.js';
 
 const router: IRouter = Router();
 
-// Protect analytics routes
-router.use(authGuard);
-
 // Apply rate limiting to analytics endpoints
 router.use(rateLimiter);
 
-// Main analytics dashboard with filtering support
-router.get('/', analyticsController.getAnalytics);
+// Main analytics dashboard - allow guest access with limited data
+router.get('/', optionalAuth, analyticsController.getAnalytics);
 
-// Individual card details
-router.get('/cards/:id', analyticsController.getCard);
+// Individual card details - allow guest access with limited data
+router.get('/cards/:id', optionalAuth, analyticsController.getCard);
 
-// Trending cards
-router.get('/trending', analyticsController.getTrending);
+// Trending cards - allow guest access with limited data
+router.get('/trending', optionalAuth, analyticsController.getTrending);
 
-// Search functionality
-router.get('/search', analyticsController.searchCards);
+// Basic search - allow for all users but limited for guests
+router.get('/search', optionalAuth, analyticsController.searchCards);
 
-// Top performers
-router.get('/top-performers', analyticsController.getTopPerformers);
+// Pro features - require authentication and pro subscription
+router.get('/top-performers', authGuard, requirePro, analyticsController.getTopPerformers);
+router.get('/platform-stats', authGuard, requirePro, analyticsController.getPlatformStats);
+router.get('/weekly-performance', authGuard, requirePro, analyticsController.getWeeklyPerformance);
+router.get('/export', authGuard, requirePro, analyticsController.exportData);
 
-// Platform statistics
-router.get('/platform-stats', analyticsController.getPlatformStats);
-
-// Weekly performance summary
-router.get('/weekly-performance', analyticsController.getWeeklyPerformance);
-
-// Data export (Pro only)
-router.get('/export', analyticsController.exportData);
+// Advanced filtering and sorting - Pro only
+router.get('/advanced-search', authGuard, requirePro, analyticsController.advancedSearch);
+router.get('/historical-data/:cardId', authGuard, requirePro, analyticsController.getHistoricalData);
+router.get('/recommendations', authGuard, requirePro, analyticsController.getPersonalizedRecommendations);
 
 export default router;

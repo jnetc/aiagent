@@ -21,6 +21,7 @@
 
       <div class="nav-menu">
         <a href="/" class="nav-link">Home</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
         <% if (isLoggedIn) { %>
           <a href="/analytics" class="nav-link">Analytics</a>
           <div class="nav-user">
@@ -28,9 +29,14 @@
             <span>
               <%= user.displayName %>
             </span>
-            <form action="/auth/logout" method="POST" style="display: inline;">
-              <button type="submit" class="btn btn-outline">Logout</button>
-            </form>
+            <% if (!user.pro) { %>
+              <a href="/pricing" class="btn btn-primary btn-small">Upgrade to Pro</a>
+              <% } else { %>
+                <span class="pro-badge">PRO</span>
+                <% } %>
+                  <form action="/auth/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-outline btn-small">Logout</button>
+                  </form>
           </div>
           <% } else { %>
             <a href="/login" class="btn btn-primary">Login</a>

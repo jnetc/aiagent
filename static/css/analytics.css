@@ -862,3 +862,623 @@
     border-color: #333;
   }
 }
+/*
+ * Дополнительные стили для контроля доступа гостей и Pro пользователей
+ * Добавить в файл: static/css/analytics.css
+ */
+
+/* Pro badge in navigation */
+.pro-badge {
+  background: linear-gradient(135deg, var(--warning-color), #f59e0b);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/* Guest notice in header */
+.guest-notice {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.guest-notice a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.guest-notice a:hover {
+  text-decoration: underline;
+}
+
+/* Guest banner */
+.guest-banner {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.guest-banner .upgrade-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.guest-banner .upgrade-content i {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.guest-banner .upgrade-content h3 {
+  margin-bottom: 0.25rem;
+}
+
+.guest-banner .upgrade-content p {
+  opacity: 0.9;
+  font-size: 0.875rem;
+}
+
+/* Pro notices for disabled features */
+.pro-notice {
+  color: var(--warning-color);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Guest limit indicator */
+.guest-limit {
+  color: var(--warning-color);
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+/* Guest call to action section */
+.guest-cta {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.cta-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.cta-content p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.cta-content ul {
+  list-style: none;
+  text-align: left;
+  max-width: 300px;
+  margin: 0 auto 2rem;
+  padding: 0;
+}
+
+.cta-content li {
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Disabled form elements styling */
+.filter-select:disabled,
+.search-input:disabled,
+.toggle-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--dark-bg);
+}
+
+.filter-select:disabled:hover,
+.search-input:disabled:hover {
+  border-color: var(--border-color);
+}
+
+/* Enhanced upgrade prompts */
+.upgrade-banner {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.upgrade-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Pro feature indicators in cards */
+.pro-feature {
+  color: var(--warning-color);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Enhanced button states for disabled features */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn:disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Feature comparison table for pricing */
+.feature-comparison {
+  margin: 2rem 0;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--border-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.feature-header,
+.feature-row {
+  background: var(--card-bg);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.feature-header {
+  font-weight: 600;
+  background: var(--dark-bg);
+}
+
+.feature-name {
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.feature-check {
+  color: var(--success-color);
+}
+
+.feature-cross {
+  color: var(--text-muted);
+}
+
+/* Access level indicators */
+.access-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.access-guest {
+  background: rgba(107, 114, 128, 0.2);
+  color: var(--text-muted);
+}
+
+.access-free {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.access-pro {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .guest-banner,
+  .upgrade-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .guest-banner .upgrade-content,
+  .upgrade-banner .upgrade-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-header:not(.feature-name) {
+    display: none;
+  }
+
+  .feature-row {
+    grid-template-columns: 2fr 1fr;
+    display: grid;
+  }
+}
+
+@media (max-width: 480px) {
+  .guest-cta {
+    padding: 1.5rem;
+  }
+
+  .pro-notice {
+    font-size: 0.625rem;
+  }
+
+  .access-level {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+  }
+}
+
+/* Pro badge in navigation */
+.pro-badge {
+  background: linear-gradient(135deg, var(--warning-color), #f59e0b);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/* Guest notice in header */
+.guest-notice {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.guest-notice a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.guest-notice a:hover {
+  text-decoration: underline;
+}
+
+/* Guest banner */
+.guest-banner {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.guest-banner .upgrade-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.guest-banner .upgrade-content i {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.guest-banner .upgrade-content h3 {
+  margin-bottom: 0.25rem;
+}
+
+.guest-banner .upgrade-content p {
+  opacity: 0.9;
+  font-size: 0.875rem;
+}
+
+/* Pro notices for disabled features */
+.pro-notice {
+  color: var(--warning-color);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Guest limit indicator */
+.guest-limit {
+  color: var(--warning-color);
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+/* Guest call to action section */
+.guest-cta {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.cta-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.cta-content p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.cta-content ul {
+  list-style: none;
+  text-align: left;
+  max-width: 300px;
+  margin: 0 auto 2rem;
+  padding: 0;
+}
+
+.cta-content li {
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Disabled form elements styling */
+.filter-select:disabled,
+.search-input:disabled,
+.toggle-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--dark-bg);
+}
+
+.filter-select:disabled:hover,
+.search-input:disabled:hover {
+  border-color: var(--border-color);
+}
+
+/* Enhanced upgrade prompts */
+.upgrade-banner {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.upgrade-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Pro feature indicators in cards */
+.pro-feature {
+  color: var(--warning-color);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Enhanced button states for disabled features */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn:disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Feature comparison table for pricing */
+.feature-comparison {
+  margin: 2rem 0;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--border-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.feature-header,
+.feature-row {
+  background: var(--card-bg);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.feature-header {
+  font-weight: 600;
+  background: var(--dark-bg);
+}
+
+.feature-name {
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.feature-check {
+  color: var(--success-color);
+}
+
+.feature-cross {
+  color: var(--text-muted);
+}
+
+/* Access level indicators */
+.access-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.access-guest {
+  background: rgba(107, 114, 128, 0.2);
+  color: var(--text-muted);
+}
+
+.access-free {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.access-pro {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .guest-banner,
+  .upgrade-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .guest-banner .upgrade-content,
+  .upgrade-banner .upgrade-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-header:not(.feature-name) {
+    display: none;
+  }
+
+  .feature-row {
+    grid-template-columns: 2fr 1fr;
+    display: grid;
+  }
+}
+
+@media (max-width: 480px) {
+  .guest-cta {
+    padding: 1.5rem;
+  }
+
+  .pro-notice {
+    font-size: 0.625rem;
+  }
+
+  .access-level {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+  }
+}

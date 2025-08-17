@@ -5,12 +5,15 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx src/server.ts",
+    "dev": "nodemon src/server.ts",
+    "dev:tsx": "tsx watch src/server.ts",
+    "dev:simple": "tsx src/server.ts",
     "build": "tsc --build",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "prebuild": "npm run clean && npm run typecheck",
+    "watch": "tsc --watch",
+    "prebuild": "pnpm run clean && pnpm run typecheck",
     "postinstall": "echo '📦 Dependencies installed successfully'"
   },
   "dependencies": {
@@ -34,11 +37,13 @@
     "@types/node": "^24.2.1",
     "@types/passport": "^1.0.16",
     "@types/passport-twitter": "^1.0.39",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=10.0.0"
   }
 }

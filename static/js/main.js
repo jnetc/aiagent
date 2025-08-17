@@ -1,4 +1,5 @@
 // Enhanced JavaScript functionality for Zora AI Agent
+// File: static/js/main.js
 
 document.addEventListener('DOMContentLoaded', function() {
   // Auto-hide notifications after 5 seconds
@@ -39,53 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Enhanced analytics card interactions
-  const analyticsCards = document.querySelectorAll('.analytics-card');
-  analyticsCards.forEach(card => {
-    // Add hover effects
-    card.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-8px)';
-      this.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.4)';
-    });
-
-    card.addEventListener('mouseleave', function() {
-      this.style.transform = 'translateY(-4px)';
-      this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.3)';
-    });
-
-    // Click analytics tracking
-    card.addEventListener('click', function(e) {
-      if (!e.target.closest('a') && !e.target.closest('button')) {
-        // Track card view
-        trackEvent('card_view', {
-          cardId: this.dataset.cardId,
-          platform: this.dataset.platform,
-          risk: this.dataset.risk,
-          trending: this.dataset.trending
-        });
-      }
-    });
-
-    // Lazy load card images
-    const images = card.querySelectorAll('img[data-src]');
-    images.forEach(img => {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-            observer.unobserve(img);
-          }
-        });
-      });
-      observer.observe(img);
-    });
-  });
-
-  // Real-time updates (WebSocket simulation)
-  if (window.location.pathname === '/analytics') {
-    initializeRealTimeUpdates();
-  }
+  // Initialize tooltips
+  initializeTooltips();
 
   // Keyboard shortcuts
   document.addEventListener('keydown', function(e) {
@@ -93,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
       const searchInput = document.getElementById('search-input');
-      if (searchInput) {
+      if (searchInput && !searchInput.disabled) {
         searchInput.focus();
       }
     }
@@ -104,20 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
       if (searchInput && searchInput === document.activeElement) {
         searchInput.value = '';
         searchInput.blur();
+        // Trigger filter update if function exists
         if (typeof applyFilters === 'function') {
           applyFilters();
         }
       }
     }
   });
-
-  // Initialize tooltips
-  initializeTooltips();
-
-  // Initialize infinite scroll for analytics page
-  if (window.location.pathname === '/analytics') {
-    initializeInfiniteScroll();
-  }
 });
 
 // Copy to clipboard functionality
@@ -174,86 +123,6 @@ function getToastIcon(type) {
   }
 }
 
-// Real-time updates simulation
-function initializeRealTimeUpdates() {
-  console.log('🔄 Real-time updates initialized');
-
-  // Simulate periodic updates every 30 seconds
-  setInterval(() => {
-    updateAnalyticsCards();
-  }, 30000);
-
-  // Simulate WebSocket connection status
-  let isConnected = true;
-  const statusIndicator = createConnectionStatus();
-
-  // Simulate connection issues occasionally
-  setInterval(() => {
-    isConnected = Math.random() > 0.1; // 90% uptime
-    updateConnectionStatus(statusIndicator, isConnected);
-  }, 10000);
-}
-
-function createConnectionStatus() {
-  const indicator = document.createElement('div');
-  indicator.id = 'connection-status';
-  indicator.style.cssText = `
-    position: fixed;
-    top: 80px;
-    left: 20px;
-    padding: 0.5rem 1rem;
-    background: var(--success-color);
-    color: white;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    z-index: 1000;
-    transition: all 0.3s;
-  `;
-  indicator.innerHTML = '<i class="fas fa-wifi"></i> Connected';
-  document.body.appendChild(indicator);
-  return indicator;
-}
-
-function updateConnectionStatus(indicator, isConnected) {
-  if (isConnected) {
-    indicator.style.background = 'var(--success-color)';
-    indicator.innerHTML = '<i class="fas fa-wifi"></i> Connected';
-  } else {
-    indicator.style.background = 'var(--error-color)';
-    indicator.innerHTML = '<i class="fas fa-wifi"></i> Reconnecting...';
-  }
-}
-
-function updateAnalyticsCards() {
-  const cards = document.querySelectorAll('.analytics-card');
-  cards.forEach((card, index) => {
-    // Simulate data updates with a small delay
-    setTimeout(() => {
-      const metrics = card.querySelectorAll('.metric-value');
-      metrics.forEach(metric => {
-        // Add subtle pulse animation
-        metric.style.animation = 'pulse 0.5s ease-in-out';
-        setTimeout(() => {
-          metric.style.animation = '';
-        }, 500);
-      });
-
-      // Randomly update some values
-      if (Math.random() > 0.8) {
-        const changeElements = card.querySelectorAll('.change');
-        changeElements.forEach(changeEl => {
-          const currentValue = parseFloat(changeEl.textContent.replace(/[^-0-9.]/g, ''));
-          const newValue = currentValue + (Math.random() - 0.5) * 10;
-          const isPositive = newValue >= 0;
-
-          changeEl.textContent = `${isPositive ? '+' : ''}${newValue.toFixed(1)}%`;
-          changeEl.className = `change ${isPositive ? 'positive' : 'negative'}`;
-        });
-      }
-    }, index * 100);
-  });
-}
-
 // Tooltips functionality
 function initializeTooltips() {
   const elements = document.querySelectorAll('[data-tooltip]');
@@ -304,97 +173,6 @@ function hideTooltip(e) {
   }
 }
 
-// Infinite scroll for analytics
-function initializeInfiniteScroll() {
-  let isLoading = false;
-  let hasMore = true;
-  let currentOffset = 0;
-
-  function loadMoreCards() {
-    if (isLoading || !hasMore) return;
-
-    isLoading = true;
-    showLoadingIndicator();
-
-    // Get current filters
-    const filters = getCurrentFilters();
-    filters.offset = currentOffset;
-    filters.limit = 10; // Load 10 more cards
-
-    const queryParams = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== '' && value !== 'all' && value !== false) {
-        queryParams.append(key, value.toString());
-      }
-    });
-
-    fetch('/analytics?' + queryParams.toString(), {
-      headers: { 'Accept': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(data => {
-      appendCards(data.cards);
-      currentOffset += data.cards.length;
-      hasMore = data.cards.length === 10;
-      isLoading = false;
-      hideLoadingIndicator();
-    })
-    .catch(error => {
-      console.error('Error loading more cards:', error);
-      isLoading = false;
-      hideLoadingIndicator();
-    });
-  }
-
-  function getCurrentFilters() {
-    return {
-      platform: document.getElementById('platform-filter')?.value || 'all',
-      risk: document.getElementById('risk-filter')?.value || 'all',
-      sort: document.getElementById('sort-filter')?.value || 'trending',
-      trending: document.getElementById('trending-only')?.checked || false,
-      search: document.getElementById('search-input')?.value || ''
-    };
-  }
-
-  function appendCards(cards) {
-    const grid = document.getElementById('analytics-grid');
-    cards.forEach(card => {
-      const cardElement = createCardElement(card);
-      grid.appendChild(cardElement);
-    });
-  }
-
-  function showLoadingIndicator() {
-    const indicator = document.createElement('div');
-    indicator.id = 'loading-indicator';
-    indicator.innerHTML = '<div class="loading-spinner"></div><p>Loading more cards...</p>';
-    indicator.style.cssText = 'text-align: center; padding: 2rem; color: var(--text-muted);';
-
-    const container = document.querySelector('.analytics-content .container');
-    container.appendChild(indicator);
-  }
-
-  function hideLoadingIndicator() {
-    const indicator = document.getElementById('loading-indicator');
-    if (indicator) {
-      indicator.remove();
-    }
-  }
-
-  // Intersection Observer for infinite scroll
-  const sentinel = document.createElement('div');
-  sentinel.id = 'scroll-sentinel';
-  document.querySelector('.analytics-content .container').appendChild(sentinel);
-
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      loadMoreCards();
-    }
-  }, { threshold: 0.1 });
-
-  observer.observe(sentinel);
-}
-
 // Event tracking
 function trackEvent(eventName, data) {
   // This would integrate with analytics service like Google Analytics
@@ -411,55 +189,180 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then(() => console.log('📱 Service Worker registered'))
-      .catch(() => console.log('❌ Service Worker registration failed'));
+      .catch(() => console.log('⚠ Service Worker registration failed'));
   });
 }
 
-// CSS for animations
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
+// Utility functions for data handling
+window.utils = {
+  // Format numbers with appropriate suffixes
+  formatNumber: function(num) {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'K';
     }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
+    return num.toString();
+  },
+
+  // Format currency
+  formatCurrency: function(amount, currency = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  },
+
+  // Format date
+  formatDate: function(date) {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(date));
+  },
+
+  // Debounce function for search inputs
+  debounce: function(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  },
+
+  // Throttle function for scroll events
+  throttle: function(func, limit) {
+    let inThrottle;
+    return function() {
+      const args = arguments;
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  },
+
+  // Check if user is on mobile
+  isMobile: function() {
+    return window.innerWidth <= 768;
+  },
+
+  // Get URL parameters
+  getURLParam: function(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  },
+
+  // Update URL without page reload
+  updateURL: function(params) {
+    const url = new URL(window.location);
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) {
+        url.searchParams.set(key, value);
+      } else {
+        url.searchParams.delete(key);
+      }
+    });
+    window.history.replaceState({}, '', url);
+  }
+};
+
+// Global error handler
+window.addEventListener('error', function(e) {
+  console.error('Global error:', e.error);
+
+  // Only show user-friendly errors in production
+  if (process?.env?.NODE_ENV === 'production') {
+    showToast('Something went wrong. Please try again.', 'error');
+  }
+});
+
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('Unhandled promise rejection:', e.reason);
+
+  if (process?.env?.NODE_ENV === 'production') {
+    showToast('Network error. Please check your connection.', 'error');
+  }
+});
+
+// CSS for animations (if not already included)
+if (!document.querySelector('#main-animations')) {
+  const style = document.createElement('style');
+  style.id = 'main-animations';
+  style.textContent = `
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
     }
-  }
 
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
-    50% {
-      transform: scale(1.05);
+
+    .tooltip {
+      animation: fadeIn 0.2s ease-out;
     }
-  }
 
-  .tooltip {
-    animation: fadeIn 0.2s ease-out;
-  }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-color);
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
 
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--border-color);
-    border-top: 3px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
-  }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
-document.head.appendChild(style);
+    /* Fade in animation for cards */
+    .analytics-card {
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}

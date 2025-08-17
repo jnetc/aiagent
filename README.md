@@ -1,6 +1,6 @@
-# Zora AI Agent - NFT Analytics Platform
+# AI Agent - Analytics Platform
 
-AI-powered analytics platform for discovering trending NFT projects and artists on Zora.co and other NFT marketplaces.
+AI-powered analytics platform for discovering trending NFT projects and other NFT marketplaces.
 
 ## Features
 
@@ -21,17 +21,20 @@ AI-powered analytics platform for discovering trending NFT projects and artists 
 ## Development Setup
 
 1. **Clone and install**:
+
    ```bash
    npm install
    ```
 
 2. **Environment setup**:
+
    ```bash
    cp .env.example .env
    # Edit .env with your API keys
    ```
 
 3. **Start development server**:
+
    ```bash
    npm run dev
    ```
@@ -41,6 +44,7 @@ AI-powered analytics platform for discovering trending NFT projects and artists 
 ## Mock Mode (for Development)
 
 Set these environment variables to enable mock mode:
+
 - `MOCK_TWITTER=1` - Skip Twitter OAuth, auto-login test user
 - `MOCK_STRIPE=1` - Skip real Stripe, simulate successful payments
 
@@ -58,6 +62,7 @@ Set these environment variables to enable mock mode:
 ## API Integration
 
 ### Middleware Order (Critical)
+
 The middleware order in `server.ts` is crucial for proper functionality:
 
 1. Static files, view engine, layouts
@@ -72,6 +77,7 @@ The middleware order in `server.ts` is crucial for proper functionality:
 ### Stripe Webhooks
 
 The Stripe webhook endpoint (`/billing/webhook`) must:
+
 - Be mounted BEFORE `express.json()` middleware
 - Use `express.raw({ type: 'application/json' })` for body parsing
 - Verify webhook signature using `stripe.webhooks.constructEvent()`
@@ -79,6 +85,7 @@ The Stripe webhook endpoint (`/billing/webhook`) must:
 ## Architecture
 
 ### Layers
+
 - **Routes**: HTTP endpoint definitions
 - **Controllers**: Request/response handling
 - **Services**: Business logic
@@ -86,12 +93,14 @@ The Stripe webhook endpoint (`/billing/webhook`) must:
 - **Integrations**: External API clients
 
 ### Authentication Flow
+
 1. User clicks "Login with Twitter"
 2. Redirect to Twitter OAuth (or mock login)
 3. Create/update user in JSON storage
 4. Set session with user ID
 
 ### Billing Flow
+
 1. User clicks "Subscribe" on pricing page
 2. Create Stripe Checkout session
 3. Redirect to Stripe payment page

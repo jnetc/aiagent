@@ -2,10 +2,11 @@ import type { Request, Response, NextFunction } from 'express';
 import { analyticsService } from '../services/analyticsService.js';
 
 class AnalyticsController {
-  async getAnalytics(req: Request, res: Response, next: NextFunction) {
+  async getAnalytics(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = req.user!;
-      const isPro = user.pro || user.tokenGatePassed;
+      const user = req.user;
+      const isGuest = !user;
+      const isPro = user ? user.pro || user.tokenGatePassed : false;
 
       // Parse query parameters for filtering
       const filters = {
@@ -18,31 +19,44 @@ class AnalyticsController {
         offset: parseInt(req.query.offset as string) || 0,
       };
 
+      // Limit guest access
+      if (isGuest) {
+        filters.limit = 3;
+        filters.offset = 0;
+        if (filters.sortBy && !['trending', 'volume'].includes(filters.sortBy)) {
+          filters.sortBy = 'trending';
+        }
+      }
+
       // Remove undefined values
       Object.keys(filters).forEach(key => {
-        if (filters[key as keyof typeof filters] === undefined || filters[key as keyof typeof filters] === '') {
-          delete filters[key as keyof typeof filters];
+        const filterKey = key as keyof typeof filters;
+        if (filters[filterKey] === undefined || filters[filterKey] === '') {
+          delete filters[filterKey];
         }
       });
 
       const { cards, total } = await analyticsService.getAnalyticsCards(isPro, filters);
       const stats = await analyticsService.getMarketStats();
-      const platformStats = await analyticsService.getPlatformStats();
-      const riskDistribution = await analyticsService.getRiskDistribution();
 
-      const itemsPerPage = res.locals.itemsPerPage ?? (isPro ? 50 : 5);
+      const platformStats = isPro ? await analyticsService.getPlatformStats() : null;
+      const riskDistribution = isPro ? await analyticsService.getRiskDistribution() : null;
+
+      const itemsPerPage = isGuest ? 3 : isPro ? 50 : 5;
 
       // For AJAX requests, return JSON
       if (req.headers.accept?.includes('application/json')) {
-        return res.json({
+        res.json({
           cards,
           total,
           stats,
           platformStats,
           riskDistribution,
           isPro,
+          isGuest,
           filters,
         });
+        return;
       }
 
       // For regular page requests, render HTML
@@ -54,25 +68,30 @@ class AnalyticsController {
         platformStats,
         riskDistribution,
         isPro,
-        showUpgradePrompt: !isPro,
+        isGuest,
+        showUpgradePrompt: !isPro && !isGuest,
+        showGuestPrompt: isGuest,
         currentFilters: filters,
         itemsPerPage,
+        user: user || null,
+        isLoggedIn: !isGuest,
       });
     } catch (error) {
       next(error);
     }
   }
 
-  async getCard(req: Request, res: Response, next: NextFunction) {
+  async getCard(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const user = req.user!;
-      const isPro = user.pro || user.tokenGatePassed;
+      const user = req.user;
+      const isPro = user ? user.pro || user.tokenGatePassed : false;
 
       const card = await analyticsService.getCardById(id, isPro);
 
       if (!card) {
-        return res.status(404).json({ error: 'Card not found' });
+        res.status(404).json({ error: 'Card not found' });
+        return;
       }
 
       res.json(card);
@@ -81,12 +100,13 @@ class AnalyticsController {
     }
   }
 
-  async getTrending(req: Request, res: Response, next: NextFunction) {
+  async getTrending(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = req.user!;
-      const isPro = user.pro || user.tokenGatePassed;
-      const limit = parseInt(req.query.limit as string) || 8;
+      const user = req.user;
+      const isGuest = !user;
+      const isPro = user ? user.pro || user.tokenGatePassed : false;
 
+      const limit = isGuest ? 3 : parseInt(req.query.limit as string) || 8;
       const trendingCards = await analyticsService.getTrendingCards(isPro, limit);
 
       res.json(trendingCards);
@@ -95,43 +115,47 @@ class AnalyticsController {
     }
   }
 
-  async searchCards(req: Request, res: Response, next: NextFunction) {
+  async searchCards(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = req.user!;
-      const isPro = user.pro || user.tokenGatePassed;
+      const user = req.user;
+      const isGuest = !user;
+      const isPro = user ? user.pro || user.tokenGatePassed : false;
       const query = req.query.q as string;
 
       if (!query) {
-        return res.status(400).json({ error: 'Search query required' });
+        res.status(400).json({ error: 'Search query required' });
+        return;
       }
 
       const results = await analyticsService.searchCards(query, isPro);
+      const limitedResults = isGuest ? results.slice(0, 3) : results;
 
       res.json({
         query,
-        results,
-        count: results.length,
+        results: limitedResults,
+        count: limitedResults.length,
+        total: results.length,
+        limited: isGuest && results.length > 3,
       });
     } catch (error) {
       next(error);
     }
   }
 
-  async getTopPerformers(req: Request, res: Response, next: NextFunction) {
+  async getTopPerformers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;
       const isPro = user.pro || user.tokenGatePassed;
       const limit = parseInt(req.query.limit as string) || 5;
 
       const topPerformers = await analyticsService.getTopPerformers(isPro, limit);
-
       res.json(topPerformers);
     } catch (error) {
       next(error);
     }
   }
 
-  async getPlatformStats(req: Request, res: Response, next: NextFunction) {
+  async getPlatformStats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const platformStats = await analyticsService.getPlatformStats();
       res.json(platformStats);
@@ -140,7 +164,7 @@ class AnalyticsController {
     }
   }
 
-  async getWeeklyPerformance(req: Request, res: Response, next: NextFunction) {
+  async getWeeklyPerformance(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const weeklyPerformance = await analyticsService.getWeeklyPerformance();
       res.json(weeklyPerformance);
@@ -149,22 +173,16 @@ class AnalyticsController {
     }
   }
 
-  async exportData(req: Request, res: Response, next: NextFunction) {
+  async exportData(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;
       const isPro = user.pro || user.tokenGatePassed;
 
-      if (!isPro) {
-        return res.status(403).json({ error: 'Pro subscription required for data export' });
-      }
-
       const { cards } = await analyticsService.getAnalyticsCards(isPro, {});
 
-      // Set headers for CSV download
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', 'attachment; filename=nft-analytics.csv');
 
-      // Generate CSV content
       const csvHeader =
         'Artist,Collection,Platform,Market Cap,Volume 24h,Followers,Smart Followers,Risk Level,Trending,AI Recommendation\n';
       const csvRows = cards
@@ -183,5 +201,55 @@ class AnalyticsController {
       next(error);
     }
   }
+
+  async advancedSearch(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user!;
+      const isPro = user.pro || user.tokenGatePassed;
+
+      const filters = {
+        platforms: req.query.platforms ? (req.query.platforms as string).split(',') : [],
+        risks: req.query.risks ? (req.query.risks as string).split(',') : [],
+        dateRange: req.query.dateRange as string,
+        volumeMin: parseInt(req.query.volumeMin as string) || 0,
+        volumeMax: parseInt(req.query.volumeMax as string) || Number.MAX_SAFE_INTEGER,
+        followersMin: parseInt(req.query.followersMin as string) || 0,
+      };
+
+      const results = await analyticsService.advancedSearch(filters, isPro);
+      res.json(results);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getHistoricalData(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { cardId } = req.params;
+      const period = (req.query.period as string) || '30d';
+
+      const historicalData = await analyticsService.getHistoricalData(cardId, period);
+      res.json(historicalData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getPersonalizedRecommendations(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user!;
+      const preferences = {
+        riskTolerance: (req.query.risk as string) || 'medium',
+        platforms: req.query.platforms ? (req.query.platforms as string).split(',') : [],
+        priceRange: (req.query.priceRange as string) || 'all',
+      };
+
+      const recommendations = await analyticsService.getPersonalizedRecommendations(user.id, preferences);
+      res.json(recommendations);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+
 export const analyticsController = new AnalyticsController();

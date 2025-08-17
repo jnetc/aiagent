@@ -18,3 +18,24 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
   }
   next();
 }
+
+// New middleware for optional auth (allow both logged in and guest users)
+export function optionalAuth(req: Request, res: Response, next: NextFunction): void {
+  // Always proceed, user might be null for guests
+  next();
+}
+
+// Pro features middleware
+export function requirePro(req: Request, res: Response, next: NextFunction): void {
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
+
+  if (!req.user.pro && !req.user.tokenGatePassed) {
+    res.redirect('/pricing?upgrade=required');
+    return;
+  }
+
+  next();
+}
