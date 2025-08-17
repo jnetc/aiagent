@@ -11,6 +11,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     res.render('index', {
       title: 'Zora AI Agent - NFT Analytics',
       demoCards,
+      user: req.user || null,
+      isLoggedIn: !!req.user,
     });
   } catch (error) {
     next(error);
@@ -18,9 +20,17 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get('/pricing', (req: Request, res: Response) => {
+  const user = req.user;
+  const isPro = user ? user.pro || user.tokenGatePassed : false;
+
   res.render('pricing', {
     title: 'Pricing - Zora AI Agent',
     stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
+    user: user || null,
+    isLoggedIn: !!user,
+    isPro,
+    cancelled: req.query.cancelled === 'true',
+    upgrade: req.query.upgrade as string,
   });
 });
 
@@ -31,6 +41,8 @@ router.get('/login', (req: Request, res: Response) => {
 
   res.render('login', {
     title: 'Login - Zora AI Agent',
+    user: null,
+    isLoggedIn: false,
   });
 });
 

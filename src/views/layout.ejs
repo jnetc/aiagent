@@ -29,10 +29,10 @@
             <span>
               <%= user.displayName %>
             </span>
-            <% if (!user.pro) { %>
-              <a href="/pricing" class="btn btn-primary btn-small">Upgrade to Pro</a>
+            <% if (user.pro) { %>
+              <span class="pro-badge">PRO</span>
               <% } else { %>
-                <span class="pro-badge">PRO</span>
+                <a href="/pricing" class="btn btn-primary btn-small">Upgrade to Pro</a>
                 <% } %>
                   <form action="/auth/logout" method="POST" style="display: inline;">
                     <button type="submit" class="btn btn-outline btn-small">Logout</button>
@@ -51,7 +51,7 @@
 
   <footer class="footer">
     <div class="footer-container">
-      <p>&copy; 2024 Zora AI Agent. Powered by AI for NFT Analytics.</p>
+      <p>2024 Zora AI Agent. Powered by AI for NFT Analytics.</p>
       <div class="footer-links">
         <a href="/pricing">Pricing</a>
         <a href="https://twitter.com/zoraaiagent" target="_blank">Twitter</a>
