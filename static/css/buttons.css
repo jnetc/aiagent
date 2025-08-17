@@ -3,39 +3,77 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border: none;
   border-radius: 0.5rem;
   font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
   font-size: 0.875rem;
+  cursor: pointer;
+}
+
+a.btn {
+  text-decoration: none;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  background-color: var(--primary-dark);
   color: white;
-}
 
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+  &:hover {
+    background-color: hsl(from var(--primary-dark) h s 60% / 1);
+  }
 }
 
 .btn-outline {
-  background: transparent;
+  background-color: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-}
 
-.btn-outline:hover {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+  &:hover {
+    border-color: var(--primary-color);
+    color: hsl(from var(--primary-dark) h s 80% / 1);
+  }
 }
 
 .btn-twitter {
-  background: #1da1f2;
+  background-color: #1da1f2;
   color: white;
+
+  &:hover {
+    background-color: hsl(from #1da1f2 h s 60% / 1);
+  }
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+  border-color: var(--success-color);
+
+  &:hover {
+    border-color: var(--success-color);
+    color: hsl(from var(--success-color) h s 80% / 1);
+  }
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: white;
+  border-color: var(--warning-color);
+
+  &:hover {
+    border-color: var(--warning-color);
+    color: hsl(from var(--warning-color) h s 80% / 1);
+  }
+}
+
+.btn-error {
+  background-color: var(--error-color);
+  color: white;
+  border-color: var(--error-color);
+
+  &:hover {
+    border-color: var(--error-color);
+    color: hsl(from var(--error-color) h s 80% / 1);
+  }
 }
 
 .btn-large {
@@ -46,4 +84,29 @@
 .btn-small {
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
+}
+
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.7;
+
+  &::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: btnSpin 1s linear infinite;
+    margin-right: 0.5rem;
+  }
+}
+
+@keyframes btnSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

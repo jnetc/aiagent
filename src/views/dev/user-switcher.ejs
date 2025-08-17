@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/static/css/global.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .dev-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    .dev-header {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .dev-header h1 {
+      margin-bottom: 0.5rem;
+    }
+
+    .dev-header p {
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .current-user-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .current-user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .user-details h3 {
+      margin-bottom: 0.25rem;
+    }
+
+    .user-details p {
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .access-level {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .access-guest {
+      background: rgba(107, 114, 128, 0.2);
+      color: var(--text-muted);
+    }
+
+    .access-free {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+    }
+
+    .access-pro {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning-color);
+    }
+
+    .user-flags {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .flag-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .flag-toggle input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+    }
+
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .user-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .user-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-color);
+    }
+
+    .user-card.current {
+      border-color: var(--success-color);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .user-card-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .user-card-info h4 {
+      margin-bottom: 0.25rem;
+    }
+
+    .user-card-info p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin: 0;
+    }
+
+    .user-card-features {
+      margin-bottom: 1rem;
+    }
+
+    .user-card-features ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .user-card-features li {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .guest-option {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      color: white;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .message {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .message.success {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success-color);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .message.info {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .user-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dev-container">
+    <div class="dev-header">
+      <h1>🔧 User Switcher</h1>
+      <p>Development Tool - Switch between different user types to test access levels</p>
+    </div>
+
+    <!-- Messages -->
+    <% if (typeof message !== 'undefined') { %>
+    <% if (message === 'logged_out') { %>
+    <div class="message success">
+      <i class="fas fa-check-circle"></i>
+      Successfully logged out. You are now in Guest mode.
+    </div>
+    <% } %>
+    <% } %>
+
+    <!-- Current User -->
+    <div class="current-user-card">
+      <h2>Current User Status</h2>
+      <% if (currentUser) { %>
+      <div class="current-user-info">
+        <div class="user-avatar">
+          <%= currentUser.displayName.charAt(0).toUpperCase() %>
+        </div>
+        <div class="user-details">
+          <h3><%= currentUser.displayName %></h3>
+          <p>@<%= currentUser.username %> (ID: <%= currentUser.id %>)</p>
+          <div style="margin-top: 0.5rem;">
+            <span class="access-level access-<%= currentUser.pro || currentUser.tokenGatePassed ? 'pro' : 'free' %>">
+              <% if (currentUser.pro || currentUser.tokenGatePassed) { %>
+              <i class="fas fa-crown"></i> Pro Access
+              <% } else { %>
+              <i class="fas fa-user"></i> Free Access
+              <% } %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Flags Toggle -->
+      <div class="user-flags">
+        <div class="flag-toggle">
+          <input type="checkbox" id="pro-flag" <%= currentUser.pro ? 'checked' : '' %>
+            onchange="updateFlag('pro', this.checked)">
+          <label for="pro-flag">Pro Subscription</label>
+        </div>
+        <div class="flag-toggle">
+          <input type="checkbox" id="token-flag" <%= currentUser.tokenGatePassed ? 'checked' : '' %>
+            onchange="updateFlag('tokenGatePassed', this.checked)">
+          <label for="token-flag">Token Gate Passed</label>
+        </div>
+      </div>
+      <% } else { %>
+      <div class="current-user-info">
+        <div class="user-avatar">
+          <i class="fas fa-user-slash"></i>
+        </div>
+        <div class="user-details">
+          <h3>Guest User</h3>
+          <p>Not authenticated</p>
+          <div style="margin-top: 0.5rem;">
+            <span class="access-level access-guest">
+              <i class="fas fa-eye"></i> Guest Access
+            </span>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Guest Mode -->
+    <div class="guest-option">
+      <h3>🔍 Guest Mode</h3>
+      <p>Browse as an unauthenticated user with limited access</p>
+      <form action="/dev/switch-user" method="POST" style="margin-top: 1rem;">
+        <input type="hidden" name="userType" value="guest">
+        <button type="submit" class="btn btn-outline">
+          <i class="fas fa-eye"></i> Switch to Guest
+        </button>
+      </form>
+    </div>
+
+    <!-- Mock Users -->
+    <h2>Test Users</h2>
+    <div class="user-grid">
+      <% mockUsers.forEach(user => { %>
+      <div class="user-card <%= currentUser && currentUser.id === user.id ? 'current' : '' %>">
+        <div class="user-card-header">
+          <div class="user-card-avatar">
+            <%= user.displayName.charAt(0).toUpperCase() %>
+          </div>
+          <div class="user-card-info">
+            <h4><%= user.displayName %></h4>
+            <p>@<%= user.username %></p>
+          </div>
+        </div>
+
+        <div class="user-card-features">
+          <ul>
+            <% if (user.pro) { %>
+            <li><i class="fas fa-check" style="color: var(--success-color);"></i> Pro Subscription</li>
+            <% } else { %>
+            <li><i class="fas fa-times" style="color: var(--text-muted);"></i> Pro Subscription</li>
+            <% } %>
+
+            <% if (user.tokenGatePassed) { %>
+            <li><i class="fas fa-check" style="color: var(--success-color);"></i> Token Gate Access</li>
+            <% } else { %>
+            <li><i class="fas fa-times" style="color: var(--text-muted);"></i> Token Gate Access</li>
+            <% } %>
+
+            <li>
+              <span class="access-level access-<%= user.pro || user.tokenGatePassed ? 'pro' : 'free' %>">
+                <%= user.pro || user.tokenGatePassed ? 'Pro' : 'Free' %> Access
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <% if (currentUser && currentUser.id === user.id) { %>
+        <button class="btn btn-outline btn-small" disabled>
+          <i class="fas fa-check"></i> Current User
+        </button>
+        <% } else { %>
+        <form action="/dev/switch-user" method="POST">
+          <input type="hidden" name="userId" value="<%= user.id %>">
+          <button type="submit" class="btn btn-primary btn-small">
+            <i class="fas fa-user"></i> Switch to <%= user.displayName %>
+          </button>
+        </form>
+        <% } %>
+      </div>
+      <% }) %>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <a href="/analytics" class="btn btn-primary">
+        <i class="fas fa-chart-line"></i> Go to Analytics
+      </a>
+      <a href="/" class="btn btn-outline">
+        <i class="fas fa-home"></i> Go to Home
+      </a>
+      <% if (currentUser) { %>
+      <form action="/dev/switch-user" method="POST" style="display: inline;">
+        <input type="hidden" name="userType" value="logout">
+        <button type="submit" class="btn btn-warning">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    async function updateFlag(flagName, value) {
+      try {
+        const response = await fetch('/dev/update-user-flags', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            [flagName]: value
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Показать уведомление
+          showNotification(`${flagName} ${value ? 'enabled' : 'disabled'} successfully!`, 'success');
+
+          // Обновить отображение уровня доступа через 500ms
+          setTimeout(() => {
+            location.reload();
+          }, 500);
+        } else {
+          showNotification('Failed to update user flag', 'error');
+        }
+      } catch (error) {
+        console.error('Error updating flag:', error);
+        showNotification('Error updating user flag', 'error');
+      }
+    }
+
+    function showNotification(message, type) {
+      const notification = document.createElement('div');
+      notification.className = `message ${type}`;
+      notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i> ${message}`;
+
+      const container = document.querySelector('.dev-container');
+      container.insertBefore(notification, container.firstChild);
+
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Добавить уведомления для URL параметров
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('switched') === 'true') {
+      showNotification('Successfully switched user!', 'success');
+    }
+  </script>
+</body>
+
+</html>

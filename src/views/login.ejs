@@ -13,20 +13,7 @@
 </head>
 
 <body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="/" class="nav-brand">
-        <i class="fas fa-robot"></i>
-        Zora AI Agent
-      </a>
-
-      <div class="nav-menu">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/pricing" class="nav-link">Pricing</a>
-        <a href="/login" class="btn btn-primary">Login</a>
-      </div>
-    </div>
-  </nav>
+  <%- include('partials/navigation') %>
 
   <main class="main-content">
     <div class="auth-container">
@@ -59,16 +46,7 @@
     </div>
   </main>
 
-  <footer class="footer">
-    <div class="footer-container">
-      <p>&copy; 2024 Zora AI Agent. Powered by AI for NFT Analytics.</p>
-      <div class="footer-links">
-        <a href="/pricing">Pricing</a>
-        <a href="https://twitter.com/zoraaiagent" target="_blank">Twitter</a>
-        <a href="https://discord.gg/zoraai" target="_blank">Discord</a>
-      </div>
-    </div>
-  </footer>
+  <%- include('partials/footer') %>
 
   <script src="/static/js/main.js"></script>
 </body>

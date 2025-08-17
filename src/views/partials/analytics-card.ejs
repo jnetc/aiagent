@@ -3,14 +3,13 @@
   <!-- Card Header -->
   <div class="card-header">
     <div class="artist-info">
-      <img src="https://via.placeholder.com/48?text=<%= card.artist.displayName.charAt(0) %>"
-        alt="<%= card.artist.displayName %>" class="artist-avatar">
+      <div class="artist-avatar"
+        style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;">
+        <%= card.artist.displayName.charAt(0).toUpperCase() %>
+      </div>
       <div class="artist-details">
-        <h4>
-          <%= card.artist.displayName %>
-        </h4>
-        <p>@<%= card.artist.username %>
-        </p>
+        <h4><%= card.artist.displayName %></h4>
+        <p>@<%= card.artist.username %></p>
       </div>
     </div>
 
@@ -20,18 +19,16 @@
         <%= card.collection.platform %>
       </span>
       <% if (card.trending) { %>
-        <span class="trending-badge">
-          <i class="fas fa-fire"></i> Trending
-        </span>
-        <% } %>
+      <span class="trending-badge">
+        <i class="fas fa-fire"></i> Trending
+      </span>
+      <% } %>
     </div>
   </div>
 
   <!-- Card Content -->
   <div class="card-content">
-    <h3 class="collection-name">
-      <%= card.collection.name %>
-    </h3>
+    <h3 class="collection-name"><%= card.collection.name %></h3>
 
     <!-- Metrics Grid -->
     <div class="metrics-grid">
@@ -40,14 +37,14 @@
           <i class="fas fa-chart-line"></i> Market Cap
         </span>
         <span class="metric-value">
-          <% if (isPro && card.metrics.marketCap> 0) { %>
-            $<%= card.metrics.marketCap.toLocaleString() %>
-              <small class="change <%= card.metrics.marketCapChange24h >= 0 ? 'positive' : 'negative' %>">
-                <%= card.metrics.marketCapChange24h>= 0 ? '+' : '' %><%= card.metrics.marketCapChange24h.toFixed(1) %>%
-              </small>
-              <% } else { %>
-                <span class="pro-feature">🔒 Pro</span>
-                <% } %>
+          <% if (isPro && card.metrics.marketCap > 0) { %>
+          $<%= card.metrics.marketCap.toLocaleString() %>
+          <small class="change <%= card.metrics.marketCapChange24h >= 0 ? 'positive' : 'negative' %>">
+            <%= card.metrics.marketCapChange24h >= 0 ? '+' : '' %><%= card.metrics.marketCapChange24h.toFixed(1) %>%
+          </small>
+          <% } else { %>
+          <span class="pro-feature">🔒 Pro</span>
+          <% } %>
         </span>
       </div>
 
@@ -56,11 +53,11 @@
           <i class="fas fa-exchange-alt"></i> Volume 24h
         </span>
         <span class="metric-value">
-          <% if (isPro && card.metrics.volume24h> 0) { %>
-            $<%= card.metrics.volume24h.toLocaleString() %>
-              <% } else { %>
-                <span class="pro-feature">🔒 Pro</span>
-                <% } %>
+          <% if (isPro && card.metrics.volume24h > 0) { %>
+          $<%= card.metrics.volume24h.toLocaleString() %>
+          <% } else { %>
+          <span class="pro-feature">🔒 Pro</span>
+          <% } %>
         </span>
       </div>
 
@@ -70,9 +67,9 @@
         </span>
         <span class="metric-value">
           <%= card.metrics.followers.toLocaleString() %>
-            <small class="change <%= card.metrics.followersChange24h >= 0 ? 'positive' : 'negative' %>">
-              <%= card.metrics.followersChange24h>= 0 ? '+' : '' %><%= card.metrics.followersChange24h %>
-            </small>
+          <small class="change <%= card.metrics.followersChange24h >= 0 ? 'positive' : 'negative' %>">
+            <%= card.metrics.followersChange24h >= 0 ? '+' : '' %><%= card.metrics.followersChange24h %>
+          </small>
         </span>
       </div>
 
@@ -81,30 +78,29 @@
           <i class="fas fa-star"></i> Smart Followers
         </span>
         <span class="metric-value">
-          <% if (isPro && card.metrics.smartFollowers> 0) { %>
-            <%= card.metrics.smartFollowers %>
-              <% } else { %>
-                <span class="pro-feature">🔒 Pro</span>
-                <% } %>
+          <% if (isPro && card.metrics.smartFollowers > 0) { %>
+          <%= card.metrics.smartFollowers %>
+          <% } else { %>
+          <span class="pro-feature">🔒 Pro</span>
+          <% } %>
         </span>
       </div>
 
       <% if (card.metrics.twitterFollowers) { %>
-        <div class="metric">
-          <span class="metric-label">
-            <i class="fab fa-twitter"></i> Twitter
-          </span>
-          <span class="metric-value">
-            <%= card.metrics.twitterFollowers.toLocaleString() %>
-              <% if (card.metrics.twitterFollowersChange24h) { %>
-                <small class="change <%= card.metrics.twitterFollowersChange24h >= 0 ? 'positive' : 'negative' %>">
-                  <%= card.metrics.twitterFollowersChange24h>= 0 ? '+' : '' %><%= card.metrics.twitterFollowersChange24h
-                      %>
-                </small>
-                <% } %>
-          </span>
-        </div>
-        <% } %>
+      <div class="metric">
+        <span class="metric-label">
+          <i class="fab fa-twitter"></i> Twitter
+        </span>
+        <span class="metric-value">
+          <%= card.metrics.twitterFollowers.toLocaleString() %>
+          <% if (card.metrics.twitterFollowersChange24h) { %>
+          <small class="change <%= card.metrics.twitterFollowersChange24h >= 0 ? 'positive' : 'negative' %>">
+            <%= card.metrics.twitterFollowersChange24h >= 0 ? '+' : '' %><%= card.metrics.twitterFollowersChange24h %>
+          </small>
+          <% } %>
+        </span>
+      </div>
+      <% } %>
     </div>
 
     <!-- AI Recommendation -->
@@ -116,41 +112,37 @@
           <%= card.riskLevel.toUpperCase() %> RISK
         </span>
       </div>
-      <p>
-        <%= card.aiRecommendation %>
-      </p>
+      <p><%= card.aiRecommendation %></p>
     </div>
 
     <!-- Tags -->
     <% if (isPro) { %>
-      <div class="card-tags">
-        <% card.tags.forEach(tag=> { %>
-          <span class="tag tag-<%= tag.replace(/[^a-z0-9]/gi, '') %>">
-            <%= tag %>
-          </span>
-          <% }) %>
-      </div>
-      <% } %>
+    <div class="card-tags">
+      <% card.tags.forEach(tag => { %>
+      <span class="tag tag-<%= tag.replace(/[^a-z0-9]/gi, '') %>"><%= tag %></span>
+      <% }) %>
+    </div>
+    <% } %>
 
-        <!-- Actions -->
-        <div class="card-actions">
-          <a href="<%= card.artist.profileUrl %>" target="_blank" class="btn btn--outline btn--small">
-            <i class="fas fa-external-link-alt"></i> View Profile
-          </a>
-          <% if (card.artist.twitterUrl) { %>
-            <a href="<%= card.artist.twitterUrl %>" target="_blank" class="btn btn--outline btn--small">
-              <i class="fab fa-twitter"></i> Twitter
-            </a>
-            <% } %>
-              <% if (isPro) { %>
-                <button class="btn btn--outline btn--small" onclick="shareCard('<%= card.id %>')">
-                  <i class="fas fa-share"></i> Share
-                </button>
-                <button class="btn btn--primary btn--small" onclick="addToWatchlist('<%= card.id %>')">
-                  <i class="fas fa-bookmark"></i> Watch
-                </button>
-                <% } %>
-        </div>
+    <!-- Actions -->
+    <div class="card-actions">
+      <a href="<%= card.artist.profileUrl %>" target="_blank" class="btn btn-outline btn-small">
+        <i class="fas fa-external-link-alt"></i> View Profile
+      </a>
+      <% if (card.artist.twitterUrl) { %>
+      <a href="<%= card.artist.twitterUrl %>" target="_blank" class="btn btn-outline btn-small">
+        <i class="fab fa-twitter"></i> Twitter
+      </a>
+      <% } %>
+      <% if (isPro) { %>
+      <button class="btn btn-outline btn-small" onclick="shareCard('<%= card.id %>')">
+        <i class="fas fa-share"></i> Share
+      </button>
+      <button class="btn btn-primary btn-small" onclick="addToWatchlist('<%= card.id %>')">
+        <i class="fas fa-bookmark"></i> Watch
+      </button>
+      <% } %>
+    </div>
   </div>
 
   <!-- Card Footer -->

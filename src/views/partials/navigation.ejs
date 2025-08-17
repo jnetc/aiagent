@@ -1,0 +1,48 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-brand">
+      <i class="fas fa-robot"></i>
+      Zora AI Agent
+    </a>
+
+    <div class="nav-menu">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/pricing" class="nav-link">Pricing</a>
+      <% if (isLoggedIn) { %>
+      <a href="/analytics" class="nav-link">Analytics</a>
+      <% } %>
+
+      <!-- Development User Switcher Link -->
+      <% if (process.env.NODE_ENV !== 'production') { %>
+      <a href="/dev/user-switcher" class="nav-link" style="color: var(--warning-color);">
+        <i class="fas fa-user-cog"></i> Dev Tools
+      </a>
+      <% } %>
+
+      <% if (isLoggedIn) { %>
+      <div class="nav-user">
+        <% if (user.profileImage) { %>
+        <img src="<%= user.profileImage %>" alt="Profile" class="nav-avatar">
+        <% } else { %>
+        <div class="nav-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <% } %>
+        <span>
+          <%= user.displayName %>
+        </span>
+        <% if (user.pro || user.tokenGatePassed) { %>
+        <span class="pro-badge">PRO</span>
+        <% } else { %>
+        <a href="/pricing" class="btn btn-primary btn-small">Upgrade to Pro</a>
+        <% } %>
+        <form action="/auth/logout" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-outline btn-small">Logout</button>
+        </form>
+      </div>
+      <% } else { %>
+      <a href="/login" class="btn btn-primary btn-small">Login</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

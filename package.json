@@ -5,8 +5,7 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon src/server.ts",
-    "dev:tsx": "tsx watch src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "dev:simple": "tsx src/server.ts",
     "build": "tsc --build",
     "start": "node dist/server.js",

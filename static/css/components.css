@@ -9,6 +9,10 @@
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
+
+  &:has(.empty-state) {
+    grid-template-columns: minmax(400px, 1fr);
+  }
 }
 
 .analytics-card {
@@ -45,6 +49,7 @@
   height: 48px;
   border-radius: 50%;
   border: 2px solid var(--primary-color);
+  flex-shrink: 0;
 }
 
 .artist-details h4 {

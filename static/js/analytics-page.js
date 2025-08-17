@@ -129,15 +129,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const newUrl = `/analytics${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
     window.history.pushState({}, '', newUrl);
 
-    // Fetch filtered data
-    fetch('/analytics?' + queryParams.toString(), {
-      headers: { 'Accept': 'application/json' }
+    // Fetch filtered data as HTML (не JSON!)
+    fetch('/analytics/cards?' + queryParams.toString(), {
+      headers: { 'Accept': 'text/html' }
     })
-      .then(response => response.json())
-      .then(data => {
-        updateAnalyticsGrid(data.cards);
-        updatePagination(data.total);
-        updateStats(data.stats);
+      .then(response => response.text())
+      .then(html => {
+        updateAnalyticsGrid(html);
+        updateStats(); // Можем отдельно получить статистику
         config.isLoading = false;
       })
       .catch(error => {
@@ -163,160 +162,28 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
-  function updateAnalyticsGrid(cards) {
+  function updateAnalyticsGrid(html) {
     if (!elements.analyticsGrid) return;
 
-    if (cards.length === 0) {
-      elements.analyticsGrid.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-search"></i>
-          <h3>No analytics cards found</h3>
-          <p>Try adjusting your filters or check back later for new data.</p>
-          ${config.isPro ? '<button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>' : ''}
-        </div>
-      `;
-      return;
-    }
+    // Просто заменяем содержимое готовым HTML
+    elements.analyticsGrid.innerHTML = html;
 
-    elements.analyticsGrid.innerHTML = cards.map(card => createCardHTML(card)).join('');
+    // Переинициализируем обработчики событий для новых элементов
+    reinitializeCardEvents();
   }
 
-  function createCardHTML(card) {
-    const proFeature = (content, fallback = '<span class="pro-feature">🔒 Pro</span>') => {
-      return config.isPro ? content : fallback;
-    };
-
-    return `
-      <div class="analytics-card" data-platform="${card.collection.platform}" data-risk="${card.riskLevel}" data-trending="${card.trending}">
-        <div class="card-header">
-          <div class="artist-info">
-            <img src="https://via.placeholder.com/48?text=${card.artist.displayName.charAt(0)}" alt="${card.artist.displayName}" class="artist-avatar">
-            <div class="artist-details">
-              <h4>${card.artist.displayName}</h4>
-              <p>@${card.artist.username}</p>
-            </div>
-          </div>
-          <div class="card-badges">
-            <span class="platform-badge platform-${card.collection.platform}">
-              <i class="fas fa-cube"></i> ${card.collection.platform}
-            </span>
-            ${card.trending ? '<span class="trending-badge"><i class="fas fa-fire"></i> Trending</span>' : ''}
-          </div>
-        </div>
-        <div class="card-content">
-          <h3 class="collection-name">${card.collection.name}</h3>
-
-          <div class="metrics-grid">
-            <div class="metric">
-              <span class="metric-label">
-                <i class="fas fa-chart-line"></i> Market Cap
-              </span>
-              <span class="metric-value">
-                ${proFeature(
-                  card.metrics.marketCap > 0 ?
-                    `$${card.metrics.marketCap.toLocaleString()} <small class="change ${card.metrics.marketCapChange24h >= 0 ? 'positive' : 'negative'}">${card.metrics.marketCapChange24h >= 0 ? '+' : ''}${card.metrics.marketCapChange24h.toFixed(1)}%</small>`
-                    : '<span class="pro-feature">🔒 Pro</span>'
-                )}
-              </span>
-            </div>
-
-            <div class="metric">
-              <span class="metric-label">
-                <i class="fas fa-exchange-alt"></i> Volume 24h
-              </span>
-              <span class="metric-value">
-                ${proFeature(
-                  card.metrics.volume24h > 0 ?
-                    `$${card.metrics.volume24h.toLocaleString()}`
-                    : '<span class="pro-feature">🔒 Pro</span>'
-                )}
-              </span>
-            </div>
-
-            <div class="metric">
-              <span class="metric-label">
-                <i class="fas fa-users"></i> Followers
-              </span>
-              <span class="metric-value">
-                ${card.metrics.followers.toLocaleString()}
-                <small class="change ${card.metrics.followersChange24h >= 0 ? 'positive' : 'negative'}">
-                  ${card.metrics.followersChange24h >= 0 ? '+' : ''}${card.metrics.followersChange24h}
-                </small>
-              </span>
-            </div>
-
-            <div class="metric">
-              <span class="metric-label">
-                <i class="fas fa-star"></i> Smart Followers
-              </span>
-              <span class="metric-value">
-                ${proFeature(
-                  card.metrics.smartFollowers > 0 ?
-                    card.metrics.smartFollowers.toString()
-                    : '<span class="pro-feature">🔒 Pro</span>'
-                )}
-              </span>
-            </div>
-          </div>
-
-          <div class="ai-recommendation">
-            <div class="ai-header">
-              <i class="fas fa-robot"></i>
-              <span>AI Recommendation</span>
-              <span class="risk-badge risk-${card.riskLevel}">${card.riskLevel.toUpperCase()} RISK</span>
-            </div>
-            <p>${card.aiRecommendation}</p>
-          </div>
-
-          ${config.isPro ? `
-            <div class="card-tags">
-              ${card.tags.map(tag => `<span class="tag tag-${tag.replace(/[^a-z0-9]/gi, '')}">${tag}</span>`).join('')}
-            </div>
-          ` : ''}
-
-          <div class="card-actions">
-            <a href="${card.artist.profileUrl}" target="_blank" class="btn btn-outline btn-small">
-              <i class="fas fa-external-link-alt"></i> View Profile
-            </a>
-            ${card.artist.twitterUrl ? `
-              <a href="${card.artist.twitterUrl}" target="_blank" class="btn btn-outline btn-small">
-                <i class="fab fa-twitter"></i> Twitter
-              </a>
-            ` : ''}
-            ${config.isPro ? `
-              <button class="btn btn-outline btn-small" onclick="shareCard('${card.id}')">
-                <i class="fas fa-share"></i> Share
-              </button>
-              <button class="btn btn-primary btn-small" onclick="addToWatchlist('${card.id}')">
-                <i class="fas fa-bookmark"></i> Watch
-              </button>
-            ` : ''}
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <span class="timestamp">
-            <i class="fas fa-clock"></i>
-            Updated ${new Date(card.updatedAt).toLocaleString()}
-          </span>
-        </div>
-      </div>
-    `;
+  function reinitializeCardEvents() {
+    // Если есть специфичные обработчики для карточек, переинициализируем их
+    const cards = elements.analyticsGrid.querySelectorAll('.analytics-card');
+    cards.forEach(card => {
+      // Добавляем анимацию появления
+      card.style.animation = 'fadeInUp 0.5s ease-out';
+    });
   }
 
-  function updatePagination(total) {
-    const totalPages = Math.ceil(total / config.itemsPerPage);
-
-    if (elements.currentPageEl) elements.currentPageEl.textContent = config.currentPage;
-    if (elements.totalPagesEl) elements.totalPagesEl.textContent = totalPages;
-
-    if (elements.prevBtn) elements.prevBtn.disabled = config.currentPage <= 1;
-    if (elements.nextBtn) elements.nextBtn.disabled = config.currentPage >= totalPages;
-  }
-
-  function updateStats(stats) {
-    // Update header stats if needed
-    // This could update the dashboard stats dynamically
+  function updateStats() {
+    // Получаем обновленную статистику отдельным запросом если нужно
+    // Или обновляем из data-атрибутов
   }
 
   // Global functions for card interactions
@@ -366,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // Implement watchlist functionality
     showToast('Added to watchlist!', 'success');
   };
 
@@ -375,7 +241,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (typeof window.showToast === 'function') {
       window.showToast(message, type);
     } else {
-      // Fallback
       console.log(`${type.toUpperCase()}: ${message}`);
     }
   }

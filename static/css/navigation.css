@@ -49,10 +49,13 @@
 }
 
 .nav-avatar {
-  width: 32px;
-  height: 32px;
+  inline-size: 2rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
   border-radius: 50%;
   border: 2px solid var(--primary-color);
+  object-fit: cover;
 }
 
 .pro-badge {

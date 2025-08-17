@@ -1,0 +1,7 @@
+<% if (cards.length === 0) { %>
+<%- include('empty-state', { isPro }) %>
+<% } else { %>
+<% cards.forEach(card => { %>
+<%- include('analytics-card', { card, isPro }) %>
+<% }) %>
+<% } %>

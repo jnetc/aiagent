@@ -10,6 +10,7 @@ router.use(rateLimiter);
 
 // Main analytics dashboard - allow guest access with limited data
 router.get('/', optionalAuth, analyticsController.getAnalytics);
+router.get('/cards', optionalAuth, analyticsController.getAnalyticsCards);
 
 // Individual card details - allow guest access with limited data
 router.get('/cards/:id', optionalAuth, analyticsController.getCard);

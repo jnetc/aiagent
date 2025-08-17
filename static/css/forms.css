@@ -20,17 +20,16 @@
 
 .filter-group {
   display: flex;
-  flex-direction: column;
   gap: 0.25rem;
 }
 
 .filter-select {
+  min-inline-size: 10rem;
+  padding: 0.5rem 1rem;
   background: var(--dark-bg);
+  border-radius: 0.5rem;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  min-width: 150px;
   transition: all 0.2s;
 }
 
@@ -51,12 +50,6 @@
 }
 
 /* Search Input */
-.search-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .search-input {
   background: var(--dark-bg);
   border: 1px solid var(--border-color);

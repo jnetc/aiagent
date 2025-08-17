@@ -1,10 +1,11 @@
-import { User, TwitterProfile } from '../types/auth.js';
+import type { TwitterProfile } from '../types/auth.js';
+import type { User } from '../types/index.js';
 import { usersRepository } from '../repositories/usersRepository.js';
 
 class AuthService {
   async createOrUpdateUser(profile: TwitterProfile): Promise<User> {
     const existingUser = await usersRepository.findByTwitterId(profile.id);
-    
+
     if (existingUser) {
       // Update existing user
       const updatedUser = {
@@ -14,11 +15,11 @@ class AuthService {
         profileImage: profile.photos?.[0]?.value,
         updatedAt: new Date().toISOString(),
       };
-      
+
       await usersRepository.update(existingUser.id, updatedUser);
       return updatedUser;
     }
-    
+
     // Create new user
     const newUser: User = {
       id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -31,7 +32,7 @@ class AuthService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    
+
     await usersRepository.create(newUser);
     return newUser;
   }
@@ -41,9 +42,8 @@ class AuthService {
       id: 'mock_twitter_id',
       username: 'testuser',
       displayName: 'Test User',
-      photos: [{ value: 'https://via.placeholder.com/150' }],
     };
-    
+
     return this.createOrUpdateUser(mockProfile);
   }
 

@@ -1,4 +1,6 @@
+// src/middlewares/authGuard.ts - Исправленная версия
 import type { Request, Response, NextFunction } from 'express';
+import type { User } from '../types/index.js';
 
 export function authGuard(req: Request, res: Response, next: NextFunction): void {
   if (!req.user) {
@@ -27,15 +29,22 @@ export function optionalAuth(req: Request, res: Response, next: NextFunction): v
 
 // Pro features middleware
 export function requirePro(req: Request, res: Response, next: NextFunction): void {
-  if (!req.user) {
+  const user = req.user as User | undefined;
+
+  if (!user) {
     res.redirect('/login');
     return;
   }
 
-  if (!req.user.pro && !req.user.tokenGatePassed) {
+  if (!user.pro && !user.tokenGatePassed) {
     res.redirect('/pricing?upgrade=required');
     return;
   }
 
   next();
+}
+
+// Utility function to safely cast req.user to our User type
+export function getAuthenticatedUser(req: Request): User | undefined {
+  return req.user as User | undefined;
 }

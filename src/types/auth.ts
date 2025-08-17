@@ -12,8 +12,15 @@ export interface AuthenticatedUser {
   profileImage?: string;
   pro: boolean;
   tokenGatePassed: boolean;
+  twitterId?: string;
+  email?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
+// Расширяем глобальный namespace Express для Passport
 declare global {
   namespace Express {
     interface User extends AuthenticatedUser {}

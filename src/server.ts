@@ -65,6 +65,44 @@ async function initializePassport() {
 await initializePassport();
 
 // Dynamic import routes to handle different export types
+// async function setupRoutes() {
+//   try {
+//     // Import billing routes first (for webhook)
+//     const billingModule = await import('./routes/billing.js');
+//     const billingRoutes = billingModule.default || billingModule;
+//     app.use('/billing', billingRoutes);
+
+//     // Body parsing middleware AFTER billing webhook route
+//     app.use(express.urlencoded({ extended: true }));
+//     app.use(express.json());
+
+//     // Make user available to all templates
+//     app.use((req, res, next) => {
+//       res.locals.user = req.user || null;
+//       res.locals.isLoggedIn = !!req.user;
+//       next();
+//     });
+
+//     // Import other routes
+//     const indexModule = await import('./routes/index.js');
+//     const indexRoutes = indexModule.default || indexModule;
+//     app.use('/', indexRoutes);
+
+//     const authModule = await import('./routes/auth.js');
+//     const authRoutes = authModule.default || authModule;
+//     app.use('/auth', authRoutes);
+
+//     const analyticsModule = await import('./routes/analytics.js');
+//     const analyticsRoutes = analyticsModule.default || analyticsModule;
+//     app.use('/analytics', analyticsRoutes);
+
+//     console.log('✅ All routes loaded successfully');
+//   } catch (error) {
+//     console.error('❌ Error loading routes:', error);
+//     throw error;
+//   }
+// }
+
 async function setupRoutes() {
   try {
     // Import billing routes first (for webhook)
@@ -95,6 +133,16 @@ async function setupRoutes() {
     const analyticsModule = await import('./routes/analytics.js');
     const analyticsRoutes = analyticsModule.default || analyticsModule;
     app.use('/analytics', analyticsRoutes);
+
+    // ДОБАВИТЬ ЭТИ СТРОКИ:
+    // User Switcher routes (только в development)
+    if (config.NODE_ENV !== 'production') {
+      const userSwitcherModule = await import('./routes/userSwitcher.js');
+      const userSwitcherRoutes = userSwitcherModule.default || userSwitcherModule;
+      app.use('/dev', userSwitcherRoutes);
+
+      console.log('🔧 User Switcher routes enabled (development mode)');
+    }
 
     console.log('✅ All routes loaded successfully');
   } catch (error) {
