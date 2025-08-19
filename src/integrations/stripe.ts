@@ -5,7 +5,7 @@ let stripe: Stripe;
 
 if (config.STRIPE_SECRET_KEY) {
   stripe = new Stripe(config.STRIPE_SECRET_KEY, {
-    apiVersion: '2023-08-16',
+    // apiVersion: '2023-08-16',
     typescript: true,
   });
 } else {
