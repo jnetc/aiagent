@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "dev:simple": "tsx src/server.ts",
-    "build": "tsc --build",
+    "build:ts": "tsc --build",
+    "build:assets": "mkdir -p dist/data && cp -R src/views dist/views && cp -R src/static dist/static || true",
+    "build": "pnpm run build:ts && pnpm run build:assets",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
